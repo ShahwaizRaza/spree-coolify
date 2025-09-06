@@ -20,7 +20,7 @@ services:
 
   web:
     build: .
-    command: bash -c "bundle install && bin/rails db:create db:migrate && bin/rails spree_sample:load && bin/rails assets:precompile && bin/rails server -b 0.0.0.0 -p 3000"
+    command: bash -c "bundle install && bin/rails db:create db:migrate spree_sample:load && bin/rails assets:precompile && bin/rails server -b 0.0.0.0 -p 3000"
     volumes:
       - .:/app
       - bundle_cache:/usr/local/bundle
