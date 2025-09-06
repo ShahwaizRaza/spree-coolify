@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   postgres:
     image: postgres:16-alpine
@@ -7,35 +5,16 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: shah@2255888
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - 'postgres:/var/lib/postgresql/data'
     ports:
       - "5432:5432"
-
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
     volumes:
-      - redis:/data
-
-  web:
-    build: .
-    command: bash -c "bundle install && bin/rails db:create db:migrate spree_sample:load && bin/rails assets:precompile && bin/rails server -b 0.0.0.0 -p 3000"
-    volumes:
-      - .:/app
-      - bundle_cache:/usr/local/bundle
-    environment:
-      DATABASE_URL: ${DATABASE_URL}
-      REDIS_URL: ${REDIS_URL}
-      RAILS_ENV: production
-      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
-    ports:
-      - "3000:3000"
-    depends_on:
-      - postgres
-      - redis
+      - 'redis:/data'
 
 volumes:
   postgres:
   redis:
-  bundle_cache:
