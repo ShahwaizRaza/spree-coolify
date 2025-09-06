@@ -35,6 +35,9 @@ end
 #   Spree.public_storage_service_name = :amazon_private # private assets, such as invoices, etc
 # end
 
+# Enable theme preview screenshots in admin dashboard
+# Spree.screenshot_api_token = <Your Screenshot API token obtained from https://screenshotapi.net/>
+
 # Configure Spree Dependencies
 #
 # Note: If a dependency is set here it will NOT be stored within the cache & database upon initialization.
@@ -82,13 +85,14 @@ Rails.application.config.after_initialize do
   # Rails.application.config.spree_storefront.head_partials << 'spree/shared/that_js_snippet_that_marketing_forced_me_to_include'
 end
 
-Spree.user_class = 'Spree::User'
+Spree.user_class = "Spree::LegacyUser"
 # Use a different class for admin users
-Spree.admin_user_class = 'Spree::AdminUser'
+# Spree.admin_user_class = 'AdminUser'
 
-Spree.google_places_api_key = ENV['GOOGLE_PLACES_API_KEY'] if ENV['GOOGLE_PLACES_API_KEY'].present?
-Spree.screenshot_api_token = ENV['SCREENSHOT_API_TOKEN'] if ENV['SCREENSHOT_API_TOKEN'].present?
+            Rails.application.config.to_prepare do
+              require_dependency 'spree/authentication_helpers'
+            end
 
-Rails.application.config.to_prepare do
-  require_dependency 'spree/authentication_helpers'
-end
+            if defined?(Devise) && Devise.respond_to?(:parent_controller)
+              Devise.parent_controller = "Spree::BaseController"
+            end

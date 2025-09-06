@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data
+
+  web:
+    build: .
+    command: bash -c "bundle install && bin/rails server -b 0.0.0.0 -p 3000"
+    volumes:
+      - .:/app
+      - bundle_cache:/usr/local/bundle
+    environment:
+      DATABASE_URL: postgres://postgres:password@postgres:5432/postgres
+      REDIS_URL: redis://redis:6379/0
+      RAILS_ENV: development
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+      - redis
+
+volumes:
+  postgres:
+  redis:
+  bundle_cache:
